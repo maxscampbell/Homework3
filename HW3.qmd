@@ -1,0 +1,34 @@
+---
+title: "HW3: Data Manipulations and Packages"
+format: pdf
+editor: visual
+---
+
+```{r}
+#| warning: FALSE
+
+library(tidyverse)
+library(palmerpenguins)
+```
+
+## Task 1
+
+### Part A
+
+The `read_csv` function is a specific use-case of the `read_delim` function that specifies that the delimiter must be a comma (`,`). The data that we're trying to read in here is delimited by semi-colons (`;`) so we cannot use the `read_csv` function as a result. The help file `?read_csv` specifies that `read_csv2` supports semi-colons (`;`) so we can use that function instead.
+
+```{r}
+#Read in and display data.txt
+data <- read_csv2(".\\data\\data.txt", col_names = TRUE, 
+                  show_col_types = FALSE)
+data
+```
+
+### Part B
+
+```{r}
+#Read in and display data2.txt
+data2 <- read_delim(".\\data\\data2.txt", col_names = TRUE, 
+                    col_types = "fdc", delim = '6')
+data2
+```
