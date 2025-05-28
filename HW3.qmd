@@ -86,3 +86,45 @@ trailblazer_wider
 ```
 
 In the first 10 games of the 2021-2022 NBA season, the following players scored more points at home games than they did at away games, on average: Jusuf Nurkic, Robert Covington, Nassir Little, Damian Lillard, and Cody Zeller.
+
+## Task 3
+
+### Part A
+
+```{r}
+#Incorrect pivot
+incorrect <- penguins |>
+  select(species, island, bill_length_mm) |>
+  pivot_wider(
+  names_from = island, values_from = bill_length_mm
+  )
+
+#Display
+incorrect
+```
+
+Notice that the output from `dplyr` is telling us that the measurements from `bill_length_mm` are not uniquely identified. This is because there are multiple measurements for each penguin species at each island, so the package doesn't know how we want the data to be handled in this instance. The solution that it defaults to is to store all of the measurements it can find as a `list` object in each cell of the tibble. For instance, notice that each column is of type `<list>`. This means that each observation in the column is a `list` object which itself is storing multiple observations. We see that there are a few different lists in the cells. For example, the observations for the Adelie penguins on Torgersen Island are stored as `<dbl [52]>`, which means that the list is storing observations in the double format, and that the list is has 52 observations. We also see that there are some cells with the observation `<NULL>`. These are combinations in the original dataset that had no observations, so there was no object to create. Since the package doesn't know what format to make the values, it just assumes they are null, and hence the null list.
+
+### Part B
+
+```{r}
+#Correct pivot
+penguins_correct <- penguins |>
+  #Select relevant variables
+  select(species, island, bill_length_mm) |>
+  #Group variables by species and island
+  group_by(species, island) |>
+  #Count the frequency of each group in the dataset
+  summarise(bill_length_mm = n()) |>
+  #Pivot for a cleaner display
+  pivot_wider(names_from = island, values_from = bill_length_mm) |>
+  #Replace empty values with 0 for consistency
+  mutate(Biscoe = replace_na(Biscoe, 0),
+         Dream = replace_na(Dream, 0),
+         Torgersen = replace_na(Torgersen, 0))
+  
+
+
+#Display results!
+penguins_correct
+```
