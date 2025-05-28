@@ -32,3 +32,57 @@ data2 <- read_delim(".\\data\\data2.txt", col_names = TRUE,
                     col_types = "fdc", delim = '6')
 data2
 ```
+
+## Task 2
+
+### Part A
+
+```{r}
+#Read in trailblazer data and take a look to make sure it read properly
+trailblazer <- read.csv(".\\data\\trailblazer.csv", header = TRUE)
+glimpse(trailblazer)
+```
+
+### Part B
+
+```{r}
+#Pivot the dataset into a longer format and separate 
+#games by Home and Away status
+trailblazer_longer <- trailblazer |>
+  pivot_longer(cols = 2:11,
+               names_to = "game",
+               values_to = "points") |>
+  separate(game, into = c("game", "location"), sep = "_")
+
+#Display results!
+head(trailblazer_longer, n = 5)
+```
+
+### Part C
+
+```{r}
+#We wish to know who scored more when playing at home versus playing away
+
+trailblazer_wider <- trailblazer_longer |>
+  #Start with a wide pivot
+  pivot_wider(names_from = location,
+              values_from = points) |>
+  #Group by players
+  group_by(Player) |>
+  #Add mean values for home and away scoring, then take the difference
+   mutate(mean_home = mean(Home, na.rm = TRUE),
+          mean_away = mean(Away, na.rm = TRUE),
+          mean_diff = mean_home - mean_away) |>
+  #Sort by descending mean difference
+  arrange(desc(mean_diff)) |>
+  #Subset to the variables we care about
+  select(Player, mean_diff) |>
+  #Only include distinct values
+  distinct(Player, .keep_all = TRUE)
+
+
+#Display results!
+trailblazer_wider
+```
+
+In the first 10 games of the 2021-2022 NBA season, the following players scored more points at home games than they did at away games, on average: Jusuf Nurkic, Robert Covington, Nassir Little, Damian Lillard, and Cody Zeller.
