@@ -128,3 +128,20 @@ penguins_correct <- penguins |>
 #Display results!
 penguins_correct
 ```
+
+## Task 4
+
+```{r}
+#Replace missing values in the penguins dataset
+penguins_filled <- penguins |>
+  #Look for empty values and replace them with the given values
+  mutate(bill_length_mm = case_when(
+    species == "Adelie" & is.na(bill_length_mm) ~ 26,
+    species == "Gentoo" & is.na(bill_length_mm) ~ 30,
+    .default = bill_length_mm #base case
+  )) |>
+  arrange(bill_length_mm) #Sort by ascending bill length
+
+#Display results!
+head(penguins_filled, 10)
+```
